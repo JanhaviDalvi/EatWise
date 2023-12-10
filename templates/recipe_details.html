@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% include 'navbar.html' %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1>Recipe Details</h1>
+        <div class="card mt-4 box_shadow">
+            <div class="card-body">
+                <h3>{{ recipe_name }}</h3>
+                <hr>
+                <p><strong>Ingredients:</strong> {{ ingredients }}</p>
+                <p><strong>Score:</strong> {{ '%0.4f'|format(score | float) }}</p>
+                <p><strong>URL:</strong> <a href="{{ url }}" target="_blank">{{ url }}</a></p>
+            </div>
+            <div class="card-footer">
+                <a class="btn btn-sm btn-outline-success me-2" href="{{ url_for("add_to_fav", recipe=recipe_name, ingredients=ingredients, score=score, url=url) }}" >Add to favourite</a>
+                <a class="btn btn-sm btn-outline-success">Add ingredients to list</a>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

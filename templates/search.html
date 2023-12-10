@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% include 'navbar.html' %}
+
+{% block content %}
+    <form action="{{ url_for('search') }}" method="post">
+        <!-- select number of results -->
+        <div class="input-group mt-5 box_shadow p-4">
+            <div class="input-group-prepend">
+            <label class="input-group-text" for="inputGroupSelect01">Select number of results</label>
+            </div>
+            <select class="custom-select" id="inputGroupSelect01" name="numberOfResults" required>
+            <option value="5" selected>5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            </select>
+        </div>
+
+        <!-- Search bar -->
+        <div class="box_shadow p-4 mt-3">
+            <p class="lead">Search recipes based on ingredients(enter comma separated values): </p>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" name="search_bar" placeholder="Enter ingredients" autofocus required>
+                <button class="btn btn-outline-secondary" type="submit">Search <i class="bi bi-search"></i></button>
+            </div>
+        </div>
+    </form>
+    <!-- results section -->
+    {% if recipe %}
+        <h1 class="mt-5">Recipe Details</h1>
+        <div>
+            <table class="data">
+                <thead>
+                    <tr>
+                        <th>Recipe</th>
+                        <th>Ingredients</th>
+                        <th>Score</th>
+                        <th>URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key in recipe.keys() %}
+                        <tr class="clickable-row" data-href="{{ url_for('recipe_details', recipe=recipe[key], ingredients=ingredients[key], score=score[key], url=url[key]) }}">
+                            <td>{{ recipe[key] }}</td>
+                            <td>{{ ingredients[key] }}</td>
+                            <td>{{ '%0.4f'|format(score[key] | float) }}</td>
+                            <td><a href="{{ url[key] }}" target="_blank">Link</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+{% endblock content %}

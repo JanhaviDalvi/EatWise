@@ -1,0 +1,32 @@
+.box_shadow{
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card:hover {
+    transform: scale(1.05); /* Hover effect: Slightly scale up the card */
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1); /* Shadow effect on hover */
+}
+
+/* for 'navbar.html' */
+.navbar{
+	background-color: #454545;
+}
+
+/* Add styling for the table if needed */
+table.data {
+    border-collapse: collapse;
+    width: 100%;
+}
+table.data th, table.data td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+table.data th {
+    background-color: #f2f2f2;
+}
+
+ /* Change cursor type on hover for table rows */
+ .clickable-row:hover {
+    cursor: pointer; /* Change to whatever cursor type you prefer */
+}

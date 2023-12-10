@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% include 'navbar.html' %}
+
+{% block content %}
+	<div class="row row-cols-md-3 g-4 mt-5">
+		<!-- Navigation boxes -->
+		<div class="col">
+			<a href="{{ url_for('search') }}" class="card h-100" style="text-decoration: none;">
+				<div class="card-body box_shadow">
+					<h5 class="card-title"><i class="bi bi-search"></i> <span class="ms-1 d-none d-sm-inline">Search Recipes</span></h5>
+					<p class="card-text">You can search for recipes based on ingredients available to you.</p>
+				</div>
+			</a>
+		</div>
+		<div class="col">
+			<a href="{{ url_for('home') }}" class="card h-100" style="text-decoration: none;">
+				<div class="card-body box_shadow">
+					<h5 class="card-title"><i class="bi bi-currency-rupee"></i> <span class="ms-1 d-none d-sm-inline">Sales</span></h5>
+					<p class="card-text">Manage sales and billing operations.</p>
+				</div>
+			</a>			
+		</div>
+		<div class="col">
+			<a href="{{ url_for('home') }}" class="card h-100" style="text-decoration: none;">
+				<div class="card-body box_shadow">
+					<h5 class="card-title"><i class="bi bi-capsule"></i> <span class="ms-1 d-none d-sm-inline">Add Medicine</span></h5>
+					<p class="card-text">Add new medicines to the database.</p>
+				</div>
+			</a>			
+		</div>
+	</div>
+{% endblock content %}

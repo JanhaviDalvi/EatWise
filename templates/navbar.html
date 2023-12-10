@@ -1,0 +1,24 @@
+<nav class="navbar navbar-expand-lg navbar-dark">
+	<div class="container">
+		<a class="navbar-brand" href="{{ url_for('home') }}">Recipe Recommender</a>
+	
+		<ul class="navbar-nav ms-auto me-4">
+			<li class="nav-item">
+				<a class="nav-link" href="{{ url_for('home') }}"><i class="bi bi-people"></i></i> Social Feed</a>
+			</li>
+		</ul>
+		
+		<ul class="navbar-nav">
+			<div class="dropdown-center">
+				<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+					{{ current_user.username }}
+				</button>
+			
+				<ul class="dropdown-menu">
+					<li><a class="dropdown-item" href="{{ url_for('home') }}">View Profile</a></li>
+					<li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+				</ul>
+			</div>
+		</ul>
+	</div>
+</nav>
