@@ -3,12 +3,13 @@ from pymongo import MongoClient
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required, UserMixin
 from bson import ObjectId
-from datetime import datetime
 from bson import ObjectId
 import config
 from forms import RegistrationForm, LoginForm
 from word2vec_rec import get_recs
 from ingredient_parser import ingredient_parser
+from ingredient_translator import trans
+
 
 mongodb_uri = config.MONGODB_URI
 secret_key = config.SECRET_KEY
@@ -143,11 +144,11 @@ def search():
 	if request.method == 'POST':
 		searchbar_data = request.form.get('search_bar')
 		number_results = int(request.form.get('numberOfResults'))
-		print(number_results)
-		result_df = get_recs(searchbar_data, number_results)
+		translated_ingredients = trans(searchbar_data)
+		result_df = get_recs(translated_ingredients, number_results)
 		result_dict = result_df.to_dict()
 		print(result_dict)
-		return render_template('search.html', recipe=result_dict['recipe'], ingredients=result_dict['ingredients'], score=result_dict['score'], url=result_dict['url'])
+		return render_template('search.html', recipe=result_dict['recipe'], ingredients=result_dict['ingredients'], score=result_dict['score'], url=result_dict['url'], searchbar_ingredients=translated_ingredients)
 
 	return render_template('search.html')
 
