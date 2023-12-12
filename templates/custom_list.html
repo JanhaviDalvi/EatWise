@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% include 'navbar.html' %}
+
+{% block content %}
+    <h1 class="my-4">Create Custom Shopping List</h1>
+    <form method="POST" action="{{ url_for('custom_list') }}">
+        <div class="mb-3">
+            <label for="listName" class="form-label">Shopping List Name</label>
+            <input type="text" class="form-control" id="listName" name="listName" placeholder="Enter list name" required value="{{ recipe_name }}">
+        </div>
+        <div class="mb-3">
+            <label for="ingredients" class="form-label">Ingredients</label>
+            <textarea class="form-control" id="ingredients" name="ingredients" rows="5" placeholder="Enter ingredients (separated by commas)" required>{{ ingredients_string }}</textarea>
+            <small id="ingredientsHelp" class="form-text text-muted">Separate multiple ingredients with commas.</small>
+        </div>
+        <button type="submit" class="btn btn-primary">Create List</button>
+    </form>
+{% endblock %}

@@ -8,6 +8,7 @@ from bson import ObjectId
 import config
 from forms import RegistrationForm, LoginForm
 from word2vec_rec import get_recs
+from ingredient_parser import ingredient_parser
 
 mongodb_uri = config.MONGODB_URI
 secret_key = config.SECRET_KEY
@@ -60,21 +61,80 @@ def recipe_details():
 	return render_template('recipe_details.html', recipe_name=recipe_name, ingredients=ingredients, score=score, url=url)
 
 
+@app.route('/view_favourite')
+@login_required
+def view_favourite():    
+	author_id = current_user.get_id()
+	favorite_recipes = db.favourite.find({'author_id': ObjectId(author_id)})
+	
+	# Pass the fetched recipes to the template for rendering
+	return render_template('view_favourite.html', favorite_recipes=favorite_recipes)
+
+@app.route('/add_to_list')
+@login_required
+def add_to_list():    
+	author_id = current_user.get_id()
+	recipe_name = request.args.get('recipe')
+	score = request.args.get('score')
+	ingredients = request.args.get('ingredients')
+	url = request.args.get('url')
+	ingredients_list = ingredients.split(',')
+	parsed_ingredients = ingredient_parser(ingredients_list)
+	
+	# Check if the entry already exists for the author_id, recipe_name, and parsed_ingredients
+	existing_entry = db.list.find_one({
+		'author_id': ObjectId(author_id),
+		'recipe_name': recipe_name,
+		'ingredients_list': parsed_ingredients,
+		'url': url
+	})
+
+	if existing_entry:
+		flash("Ingredients already added!", "warning")
+	else:
+		new_entry = {
+			'recipe_name': recipe_name,
+			'ingredients_list': parsed_ingredients,
+			'url': url,
+			'author_id': ObjectId(author_id)
+		}
+		db.list.insert_one(new_entry)
+		flash("Ingredients have been saved in shopping list.", "success")
+	return redirect(url_for("recipe_details", recipe=recipe_name, ingredients=ingredients, score=score, url=url))
+
 @app.route('/add_to_fav')
 @login_required
 def add_to_fav():    
 	author_id = current_user.get_id()
-	new_entry = {
-		'recipe_name': request.args.get('recipe'),
-		'ingredients': request.args.get('ingredients'),
-		'score': request.args.get('score'),
-		'url': request.args.get('url'),
-		'author_id': ObjectId(author_id)
-	}
-	print(new_entry)
-	db.favourite.insert_one(new_entry)
-	flash("Recipe has been added to favourite!", "success")
-	return redirect(url_for("recipe_details", recipe=new_entry['recipe_name'], ingredients=new_entry['ingredients'], score=new_entry['score'], url=new_entry['url']))
+	recipe_name = request.args.get('recipe')
+	ingredients = request.args.get('ingredients')
+	score = request.args.get('score')
+	url = request.args.get('url')
+
+	# Check if the recipe already exists for the author_id
+	existing_recipe = db.favourite.find_one({
+		'author_id': ObjectId(author_id),
+		'recipe_name': recipe_name,
+		'ingredients': ingredients,
+		'score': score,
+		'url': url
+	})
+
+	if existing_recipe:
+		flash("Recipe already exists in favorites!", "warning")
+	else:
+		new_entry = {
+			'recipe_name': recipe_name,
+			'ingredients': ingredients,
+			'score': score,
+			'url': url,
+			'author_id': ObjectId(author_id)
+		}
+		db.favourite.insert_one(new_entry)
+		flash("Recipe has been added to favorites!", "success")
+
+	# Redirect back to the recipe details page
+	return redirect(url_for("recipe_details", recipe=recipe_name, ingredients=ingredients, score=score, url=url))
 
 
 @app.route("/search", methods=['GET', 'POST'])
@@ -90,6 +150,57 @@ def search():
 		return render_template('search.html', recipe=result_dict['recipe'], ingredients=result_dict['ingredients'], score=result_dict['score'], url=result_dict['url'])
 
 	return render_template('search.html')
+
+
+@app.route("/shopping_list", methods=['GET', 'POST'])
+@login_required
+def shopping_list():
+	author_id = current_user.get_id()
+	shopping_lists = db.list.find({'author_id': ObjectId(author_id)})
+	return render_template('shopping_list.html', shopping_lists=shopping_lists)
+
+
+@app.route("/edit_shopping_list/<list_id>", methods=['GET', 'POST'])
+@login_required
+def edit_shopping_list(list_id):
+	# Convert the list_id to ObjectId type
+	list_id_object = ObjectId(list_id)
+	# Fetch the shopping list based on the list_id
+	shopping_list = db.list.find_one({'_id': list_id_object})
+	recipe_name = shopping_list.get('recipe_name')
+	ingredients_list = shopping_list.get('ingredients_list')
+	ingredients_string = ', '.join(ingredients_list)
+	return render_template('custom_list.html', recipe_name=recipe_name, ingredients_string=ingredients_string)
+
+
+@app.route("/custom_list", methods=['GET', 'POST'])
+@login_required
+def custom_list():
+	author_id = current_user.get_id()
+	if request.method == 'POST':
+		list_name = request.form.get('listName')
+		ingredients = request.form.get('ingredients')
+		ingredients_list = ingredients.split(", ")
+		print(list_name, ingredients_list)
+		# Check if the entry already exists for the author_id, recipe_name, and parsed_ingredients
+		existing_entry = db.list.find_one({
+			'author_id': ObjectId(author_id),
+			'recipe_name': list_name,
+			'ingredients_list': ingredients_list,
+		})
+
+		if existing_entry:
+			flash("List already added!", "warning")
+		else:
+			new_entry = {
+				'recipe_name': list_name,
+				'ingredients_list': ingredients_list,
+				'author_id': ObjectId(author_id)
+			}
+			db.list.insert_one(new_entry)
+			flash("New list have been created", "success")
+			return redirect(url_for(shopping_list))
+	return render_template('custom_list.html')
 
 @app.route("/register_user", methods=['GET', 'POST'])
 def register():

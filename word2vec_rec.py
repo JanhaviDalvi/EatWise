@@ -1,12 +1,10 @@
-import os
-import sys
-import logging
 import unidecode
 import ast
 
 import numpy as np
 import pandas as pd
 
+# used this model for word assciation
 from gensim.models import Word2Vec
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity

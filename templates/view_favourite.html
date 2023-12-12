@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% include 'navbar.html' %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1>Favorite Recipes</h1>
+        <div class="row mt-4">
+            {% for recipe in favorite_recipes %}
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-body box_shadow">
+                            <h5 class="card-title">{{ recipe.recipe_name }}</h5>
+                            <p class="card-text"><strong>Ingredients:</strong> {{ recipe.ingredients }}</p>
+                            <a href="{{ recipe.url }}" class="btn btn-primary" target="_blank">View Recipe</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}

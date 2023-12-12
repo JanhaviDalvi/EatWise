@@ -15,7 +15,7 @@
             </div>
             <div class="card-footer">
                 <a class="btn btn-sm btn-outline-success me-2" href="{{ url_for("add_to_fav", recipe=recipe_name, ingredients=ingredients, score=score, url=url) }}" >Add to favourite</a>
-                <a class="btn btn-sm btn-outline-success">Add ingredients to list</a>
+                <a class="btn btn-sm btn-outline-success" href="{{ url_for("add_to_list", recipe=recipe_name, ingredients=ingredients, score=score, url=url) }}">Add ingredients to list</a>
             </div>
         </div>
     </div>

@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+
+{% include 'navbar.html' %}
+
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 class="my-4">Shopping Lists</h1>
+        <a class="btn btn-primary" href="{{ url_for('custom_list') }}">Create Custom List</a>
+    </div>
+    <div class="row">
+        {% for shopping_list in shopping_lists %}
+            <div class="col-md-6">
+                <div class="card mb-4 box_shadow">
+                    <div class="card-body">
+                        <h3>{{ shopping_list.recipe_name }}</h3>
+                        <div class="form-group">
+                            <label class="mb-2">Ingredients:</label>
+                            {% for ingredient in shopping_list.ingredients_list %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="ingredient_{{ loop.index }}" value="{{ ingredient }}" onchange="toggleStrikeThrough(this)">
+                                    <label class="form-check-label" for="ingredient_{{ loop.index }}" id="label_{{ loop.index }}">{{ ingredient }}</label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if shopping_list.url %}
+                            <a href="{{ shopping_list.url }}" target="_blank" class="mt-2 btn btn-sm btn-primary">View Details</a>
+                        {% else %}
+                            <a href="{{ url_for('edit_shopping_list', list_id=shopping_list._id) }}" class="mt-2 btn btn-sm btn-primary">Edit</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% if loop.index % 2 == 0 %}
+                </div><div class="row">
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock content %}
+
+<!-- bug: list lable clicks -->
